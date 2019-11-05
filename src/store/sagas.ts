@@ -1,10 +1,8 @@
 import { all } from 'redux-saga/effects';
+import * as newsDuck from './news'
 
 export function* rootSaga() {
     yield all([
-        // ...templatesSaga,
-        // ...modelSaga,
-        // ...logicSaga,
-        // ...sampleSaga,
+        ...newsDuck.saga,
     ]);
 }

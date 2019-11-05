@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { takeLatest, put } from 'redux-saga/effects';
+
 export const NS = 'news';
 
 export const initialState = {
@@ -7,11 +9,15 @@ export const initialState = {
     error: null,
 };
 
+// @ts-ignore
 const root = state => state[NS];
 export const selectors = {
     root,
+// @ts-ignore
     data: state => root(state).data,
+// @ts-ignore
     loading: state => root(state).loading,
+// @ts-ignore
     error: state => root(state).error,
 };
 
@@ -21,14 +27,7 @@ export const types = {
     fail: `${NS}/FAIL`,
 };
 
-const getNews = () => ({
-    type: types.get
-});
-
-export const actions = {
-    getNews,
-};
-
+// @ts-ignore
 const rawReducer = (state = initialState, { type, payload }) => {
     switch (type) {
         case types.get:
@@ -45,3 +44,27 @@ const rawReducer = (state = initialState, { type, payload }) => {
 export const reducer = combineReducers({
     [NS]: rawReducer
 });
+
+// @ts-ignore
+const getNews = () => ({ type: types.get });
+// @ts-ignore
+const getSuccess = payload => ({ type: types.suc, payload });
+// @ts-ignore
+const getFail = payload => ({ type: types.fail, payload });
+
+export function* getNewsHandler() {
+    try {
+        const data = yield fetch('https://jsonplaceholder.typicode.com/todos/1').then(r => r.json());
+        yield put(getSuccess(data));
+    } catch (err) {
+        yield put(getFail(err));
+    }
+}
+
+export const actions = {
+    getNews,
+};
+
+export const saga = [
+    takeLatest(types.get, getNewsHandler),
+];
