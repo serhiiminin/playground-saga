@@ -1,7 +1,7 @@
 import { createFetcherJson } from './fetcher';
 import { createRequests } from './requests';
 
-const ENDPOINT = 'https://jsonplaceholder.typicode.com/todos';
+const ENDPOINT: string = 'https://jsonplaceholder.typicode.com/todos';
 
 const fetcher = createFetcherJson(window.fetch);
 const request = createRequests(ENDPOINT, fetcher);

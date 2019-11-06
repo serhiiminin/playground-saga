@@ -2,24 +2,43 @@ import { combineReducers } from 'redux';
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { api } from '../api';
 
+
+interface Todo {
+    completed: boolean,
+    id: number,
+    title: string,
+    userId: number,
+}
+
+interface Action<T> {
+    type: string,
+    payload: T,
+}
+
+type DataType = Todo[];
+type LoadingType = boolean;
+type ErrorType = Error | null;
+
+export interface News {
+    data: DataType,
+    loading: LoadingType,
+    error: ErrorType,
+}
+
 export const NS = 'news';
 
 export const initialState = {
-    data: null,
+    data: [],
     loading: false,
     error: null,
 };
 
-// @ts-ignore
-const root = state => state[NS];
+const root = (state: any): News => state[NS];
 export const selectors = {
     root,
-// @ts-ignore
-    data: state => root(state).data,
-// @ts-ignore
-    loading: state => root(state).loading,
-// @ts-ignore
-    error: state => root(state).error,
+    data: (state: any): DataType => root(state).data,
+    loading: (state: any): LoadingType => root(state).loading,
+    error: (state: any): ErrorType => root(state).error,
 };
 
 export const types = {
@@ -28,8 +47,7 @@ export const types = {
     fail: `${NS}/FAIL`,
 };
 
-// @ts-ignore
-const rawReducer = (state = initialState, { type, payload }) => {
+const rawReducer = (state = initialState, { type, payload }: Action<any>) => {
     switch (type) {
         case types.get:
             return { ...state, loading: true };
@@ -46,12 +64,9 @@ export const reducer = combineReducers({
     [NS]: rawReducer
 });
 
-// @ts-ignore
 const getNews = () => ({ type: types.get });
-// @ts-ignore
-const getSuccess = payload => ({ type: types.suc, payload });
-// @ts-ignore
-const getFail = payload => ({ type: types.fail, payload });
+const getSuccess = (payload: DataType): Action<DataType> => ({ type: types.suc, payload });
+const getFail = (payload: DataType): Action<DataType> => ({ type: types.fail, payload });
 
 export function* getNewsHandler() {
     try {
