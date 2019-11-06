@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import { takeLatest, put } from 'redux-saga/effects';
+import { takeLatest, put, call } from 'redux-saga/effects';
+import { api } from '../api';
 
 export const NS = 'news';
 
@@ -54,7 +55,8 @@ const getFail = payload => ({ type: types.fail, payload });
 
 export function* getNewsHandler() {
     try {
-        const data = yield fetch('https://jsonplaceholder.typicode.com/todos/1').then(r => r.json());
+        const data = yield call(api.getList);
+
         yield put(getSuccess(data));
     } catch (err) {
         yield put(getFail(err));
